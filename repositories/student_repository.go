@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+
 	"go-api-gin-lab/models"
 )
 
@@ -45,4 +46,38 @@ func (r *StudentRepository) Create(s models.Student) error {
 		s.Id, s.Name, s.Major, s.GPA,
 	)
 	return err
+}
+
+// 🔹 UPDATE
+func (r *StudentRepository) Update(id string, s models.Student) error {
+	result, err := r.DB.Exec(
+		"UPDATE students SET name=?, major=?, gpa=? WHERE id=?",
+		s.Name, s.Major, s.GPA, id,
+	)
+	if err != nil {
+		return err
+	}
+
+	affected, _ := result.RowsAffected()
+	if affected == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
+}
+
+// 🔹 DELETE
+func (r *StudentRepository) Delete(id string) error {
+	result, err := r.DB.Exec(
+		"DELETE FROM students WHERE id=?",
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	affected, _ := result.RowsAffected()
+	if affected == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
 }
